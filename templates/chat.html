@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    /* Chat container for scrolling messages */
+    .chat-container {
+        max-height: calc(100vh - 350px); /* Adjust for heading, etc. */
+        overflow:auto;
+        background-color: #f8f9fa;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        margin-bottom: 1rem;
+        padding-bottom: 120px; /* So last message isn't behind the input bar */
+    }
+
+    /* Fixed input at bottom of the viewport */
+    .fixed-bottom-form {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background: #fff;
+        border-top: 1px solid #ccc;
+        padding: 0.5rem 1rem;
+    }
+
+    /* Add spacing so content doesn't run behind the fixed form */
+    .content-wrapper {
+        padding-bottom: 200px;
+    }
+
+    /* Processing indicator styles */
+    #processingIndicator {
+        display: none;
+        font-weight: bold;
+        font-size: 1em;
+        color: #007bff;
+        margin-top: 10px;
+    }
+</style>
+
+<h1>{{ session_name }}</h1>
+
+<div class="row">
+    <!-- Sidebar column for uploading PDFs -->
+    <div class="col-md-3">
+        <div class="mb-3">
+            <form action="{{ url_for('chat', session_id=session_id) }}" method="POST" enctype="multipart/form-data" class="row g-3" onsubmit="showProcessingIndicator()">
+                <div class="col-12">
+                    <label class="form-label">Upload PDF Documents:</label>
+                    <input type="file" name="pdf_files" multiple class="form-control"/>
+                </div>
+                <div class="col-12">
+                    <button type="submit" id="processBtn" class="btn btn-primary w-100">Process PDFs</button>
+                </div>
+            </form>
+            <div id="processingIndicator">Indexing your PDFs, please wait...</div>
+        </div>
+    </div>
+
+    <!-- Main content column -->
+    <div class="col-md-9">
+        <div class="chat-container">
+            {% for msg in chat_history %}
+                {{ user_template|safe|replace("{{msg}}", msg.user|escape) }}
+                {{ bot_template|safe|replace("{{msg}}", msg.bot|escape) }}
+
+                {% if msg.context_docs %}
+                <div class="mt-2 mb-4 p-2 border rounded bg-white">
+                    <h5>Source Documents:</h5>
+                    {% for doc in msg.context_docs %}
+                        <p><b>Source:</b> {{ doc.metadata['source'] }}</p>
+                        <p>{{ doc.page_content }}</p>
+                        <hr>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Fixed input form at bottom -->
+<div class="fixed-bottom-form">
+    <form action="{{ url_for('chat', session_id=session_id) }}" method="POST" class="row g-3">
+        <div class="col-auto" style="width:100%">
+            <input type="text" name="user_input" placeholder="Ask a question..." class="form-control"/>
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-success">Send</button>
+        </div>
+    </form>
+
+    <form action="{{ url_for('clear_chat', session_id=session_id) }}" method="GET" class="mt-2">
+        <button type="submit" class="btn btn-warning btn-sm">Clear Chat History</button>
+    </form>
+</div>
+
+<script>
+    function showProcessingIndicator() {
+        var processingIndicator = document.getElementById('processingIndicator');
+        var processBtn = document.getElementById('processBtn');
+
+        // Display the processing message
+        processingIndicator.style.display = 'block';
+
+        // Disable the submit button
+        processBtn.disabled = true;
+    }
+</script>
+
+{% endblock %}
