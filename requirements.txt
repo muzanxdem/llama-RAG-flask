@@ -1,0 +1,7 @@
+Flask
+langchain
+langchain-community
+langchain-huggingface
+sentence-transformers
+faiss-cpu  # or faiss-gpu if you have GPU support
+torch
