@@ -1,0 +1,27 @@
+/* Make sure the body takes full height */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+/* The input bar at the bottom */
+#input-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: #fff;
+    border-top: 1px solid #ccc;
+    padding: 10px;
+}
+
+/* Add some bottom padding to the container holding chat messages so last messages aren't hidden behind the input bar */
+#chat-container {
+    padding-bottom: 120px; /* Adjust as needed */
+}
+
+/* You might need to ensure the main container allows scrolling within the viewport */
+.container {
+    overflow: hidden;
+}
