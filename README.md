@@ -1,4 +1,6 @@
 # Build a RAG Document Chatbot using Llama LLM Models
+## Overview
+A Retrieval-Augmented Generation (RAG) chatbot powered by the Ollama platform, designed to deliver precise and context-aware responses by combining document retrieval with generative AI. The system efficiently indexes and retrieves relevant documents, seamlessly integrating them into AI-generated conversational responses, making it an ideal solution for knowledge management and customer support applications.
 ## Install the Requirements
 ```
 pip3 install -r requirements
